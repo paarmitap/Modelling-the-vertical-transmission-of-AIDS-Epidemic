@@ -1,0 +1,92 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+Q=2000
+d=1/70
+E=0.4
+beta=0.05
+c=25
+T=0
+mu=0.5
+sigma=0.3
+a=1
+delta=0.2
+
+N0, I0, P0, A0 = 10000, 2000, 500, 200  # initial conditions
+n=60
+t=[x for x in range(n)] # no of days
+
+def RK4(n,T, N0, I0, P0, A0, dt = 1):
+     
+    N=np.empty(n)
+  
+    I=np.empty(n)
+    P=np.empty(n)
+    A=np.empty(n)
+    N[0],P[0],I[0],A[0]=N0,P0,I0,A0
+    
+    def dNdt(t, N, I, A):
+        return (Q - d * N - a * A + ( 1 - E ) * T * I )
+
+    def dIdt(t, N, P, I, A):
+        return ( (beta * c * ( N - I - P - A ) * I ) / N - ( delta + d ) * I + (1 - E) * T * I )
+    
+    def dPdt(t, P, I):
+        return ( (delta * sigma * I) - (mu + d) * P )
+
+   
+    def dAdt(t, I, A, P):
+        return (( 1 - sigma) * delta * I + mu * P - (a + d) * A )
+  
+    for i in range(0,n-1):
+        Ni = N[i]
+        Ii = I[i]
+        Pi = P[i]
+        Ai = A[i]
+       
+
+        N_k1 = dNdt(i, Ni, Ii, Ai)
+        I_k1 = dIdt(t, Ni, Pi, Ii, Ai)
+        P_k1 = dPdt(i, Pi, Ii)
+        A_k1 = dAdt(i, Ii, Ai, Pi)
+     
+        
+        
+        N_k2 = dNdt(i + dt / 2, Ni + dt / 2 * N_k1, Ii + dt / 2 * I_k1, Ai + dt / 2 * A_k1)
+        I_k2 = dIdt(i + dt / 2, Ni + dt / 2 * N_k1, Pi + dt / 2 * P_k1, Ii + dt / 2 * I_k1, Ai + dt / 2 * A_k1)
+        P_k2 = dPdt(i + dt / 2, Pi + dt / 2 * P_k1, Ii + dt / 2 * I_k1)
+        A_k2 = dAdt(i + dt / 2, Ii + dt / 2 * I_k1, Ai + dt / 2 * A_k1, Pi + dt / 2 * P_k1)
+        
+        N_k3 = dNdt(i + dt / 2, Ni + dt / 2 * N_k2, Ii + dt / 2 * I_k2, Ai + dt / 2 * A_k2)
+        I_k3 = dIdt(i + dt / 2, Ni + dt / 2 * N_k2, Pi + dt / 2 * P_k2, Ii + dt / 2 * I_k2, Ai + dt / 2 * A_k2)
+        P_k3 = dPdt(i + dt / 2, Pi + dt / 2 * P_k2, Ii + dt / 2 * I_k2)
+        A_k3 = dAdt(i + dt / 2, Ii + dt / 2 * I_k2, Ai + dt / 2 * A_k2, Pi + dt / 2 * P_k2)
+        
+    
+        N_k4 = dNdt(i + dt, Ni + dt * N_k3, Ii + dt * I_k3, Ai + dt * A_k3)
+        I_k4 = dIdt(i + dt, Ni + dt * N_k3, Pi + dt * P_k3, Ii + dt * I_k3, Ai + dt * A_k3)
+        P_k4 = dPdt(i + dt, Pi + dt * P_k3, Ii + dt * I_k3)
+        A_k4 = dAdt(i + dt, Ii + dt * I_k3, Ai + dt * A_k3, Pi + dt * P_k3)
+        
+    
+        N[i + 1] = Ni + dt / 6 * (N_k1 + 2 * N_k2 + 2 * N_k3 + N_k4)
+        I[i + 1] = Ii + dt / 6 * (I_k1 + 2 * I_k2 + 2 * I_k3 + I_k4)
+        P[i + 1] = Pi + dt / 6 * (P_k1 + 2 * P_k2 + 2 * P_k3 + P_k4)
+        A[i + 1] = Ai + dt / 6 * (A_k1 + 2 * A_k2 + 2 * A_k3 + A_k4)
+        
+        
+    #plt.plot(t,N,label='N',color='lawngreen',linewidth=3)    
+    #plt.plot(t,P,label='P',color='crimson',linewidth=3)
+    #plt.plot(t,I,label= 'I', color='orange',linewidth=3)
+    plt.plot(t,A, label=T, linewidth=3)#,color='darkgreen',linewidth=3)
+  
+    plt.legend(loc='best')
+    plt.xlabel('Time(years)')
+    plt.ylabel('AIDS Patients (A)')
+    plt.title('Variation of AIDS Population for different values of Theta')
+    plt.ylim(1200,2400)
+
+RK4(n, 0.01, 10000, 2000, 500, 200, 1)    
+   
+RK4(n, 0.04, 10000, 2000, 500, 200, 1)
+RK4(n, 0.07, 10000, 2000, 500, 200, 1) 
