@@ -1,0 +1,83 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+Q=2000
+d=1/70
+E=0.4
+beta=0.05
+c=25
+n=50
+mu=0.5
+sigma=0.3
+a=1
+delta=0.2
+theta=0.01
+I=np.empty(n)
+A=np.empty(n)
+T=np.linspace(0.001,0.01,n)  
+alpha=np.linspace(0.2,1,n)
+
+def Theta(T):
+    g = ( 1 + ((a * delta) /( mu + d )) + (( mu * delta + d * delta * (1 - sigma))/( beta * c + (1 - E) * T  - delta - d)) )
+    I = Q / (beta * c * d * g  + ((a * (mu + d * (1 - sigma))* delta)/((a + d)*(mu + d))) - (1-E)*T )
+
+    return I
+
+def AL(alpha):
+     g1 = ( 1 + ((alpha * delta) /( mu + d )) + (( mu * delta + d * delta * (1 - sigma))/( beta * c + (1 - E) * theta  - delta - d)) )
+     I1 = Q / (beta * c * d * g1  + ((alpha * (mu + d * (1 - sigma))* delta)/((alpha + d)*(mu + d))) - (1-E)*theta )
+     A = (delta * I1 * (mu + d * ( 1 - sigma)))/((alpha + d)*(mu + d))
+     return A
+
+for i in range(n):
+    I = Theta(T)
+   
+for i in range(n):    
+     A = AL(alpha)
+plt.plot(T,I,color='r',linewidth=3)
+plt.title('Variation of I* as Theta varies')
+plt.xlabel('Theta')
+plt.ylabel('Equilibrium level of infectives I*')
+plt.show()
+
+
+plt.plot(alpha,A,color='g',linewidth=3)
+plt.title('Variation of A* as Alpha varies')
+plt.xlabel('Alpha')
+plt.ylabel('Equilibrium level of AIDS patients A*')
+plt.show()
+
+Lambda=2000
+d=1/70
+E=0.4
+beta=0.05
+c=25
+T=0.01
+mu=0.5
+sigma=0.3
+a=1
+#delta=0.2
+n=100
+delta=np.linspace(1,1.2,n)
+gamma=np.empty(n)
+I=np.empty(n)
+N=np.empty(n)
+
+for i in range(n):
+    gamma[i]=(1+a*delta[i]/(mu+d)+(mu*delta[i]+d*delta[i]*(1-sigma)/((a+d)*(mu+d))))/(beta*c+(1-E)*T-(delta[i]+d))
+    I[i] = Lambda/(beta*c*d*gamma[i]+a*(mu+d*(1-sigma))*delta[i]/((a+d)*(mu+d))-(1-E)*T)
+    N[i] = beta*c*gamma[i]*I[i]
+
+
+plt.plot(delta,I,color='r',linewidth=3)
+plt.title('Variation of I* as Delta varies')
+plt.xlabel('Delta')
+plt.ylabel('Equilibrium level of infectives I*')
+plt.show()
+
+
+plt.plot(delta,N,color='b',linewidth=3)
+plt.title('Variation of N* as Delta varies')
+plt.xlabel('Delta')
+plt.ylabel('Equilibrium level of total population N*')
+plt.show()
