@@ -1,0 +1,28 @@
+import numpy as np
+import matplotlib.pyplot as plt
+n=20
+t=np.linspace(0.25,4,n)
+R_0=np.empty(n)
+R_1=np.empty(n)
+R_2=np.empty(n)
+
+
+
+for i in range(n):
+        R_0[i] = 1 + (0.6931/(t[i] * (0.2 + 1/70)))
+        R_1[i] = 1 + (0.6931/(t[i] * (0.4 + 1/70)))
+        R_2[i] = 1 + (0.6931/(t[i] * (0.6 + 1/70)))
+    
+   
+
+plt.plot(t, R_0, label='delta =0.2',linewidth=3)
+
+plt.plot(t, R_1, label='delta =0.4',linewidth=3)
+
+plt.plot(t, R_2, label='delta =0.6',linewidth=3)
+plt.legend(loc='best')
+plt.xlabel('Doubling Time (Years)')
+plt.ylabel('Reproduction Rate')
+plt.title('Variation of basic reproductive rate R_0 with doubling time t_d for different values of delta')
+plt.show()
+    
